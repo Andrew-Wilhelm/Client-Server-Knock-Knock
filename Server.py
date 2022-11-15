@@ -1,29 +1,38 @@
 import socket
 
+knocking = {
+    1: "A little old lady",
+    2: "Euripides",
+    3: "Snow",
+    4: "Hawaii",
+    "A little old lady who": "Hey, you can yodel!",
+    "Euripides who": "Euripides clothes, you pay for them!",
+    "Snow who": "Snow use. The joke is over",
+    "Hawaii who": "I’m good. Hawaii you?"
+}
 
-def joke():
+
+# with connection
+def joke(j):
     serversocket.send("Knock Knock".encode())
+    done = "not"
     while True:
         msg = serversocket.recv(1024).decode()
         if msg == "who's there":
-            serversocket.send(knock.clues[knock.i].encode())
-        elif msg == knock.whoLine[knock.i]:
-            serversocket.send(knock.punchLine[knock.i].encode())
-            knock.i = knock.i + 1
+            serversocket.send(knocking[j].encode())
+        elif msg not in knocking:
+            serversocket.send("Improper response\n".encode())
             break
-        elif msg == "close":
-            serversocket.close()
+        elif j > 4:
+            j = 1
+        else:
+            for key in knocking.keys():
+                if msg == key:
+                    serversocket.send(f"{knocking[key]}\nHear another!\n".encode())
+                    done = "done"
+        if done == "done":
             break
-
-
-class KnockKnock:
-    clues = ["A little old lady", "Euripides", "Snow", "Hawaii"]
-    punchLine = ["Hey, you can yodel!", "Euripides clothes, you pay for them!", "Snow use. The joke is over",
-                 "I’m good. Hawaii you?"]
-    whoLine = ["A little old lady who", "Euripides who", "Snow who", "Hawaii who"]
-    i = 0
-
-    # infinite loop - until interrupt or error
+            # serversocket.send("Wrong Reply".encode())
 
 
 # File to show cross-platform.
@@ -40,7 +49,7 @@ simple.bind((HOST, PORT))
 print(f"Socket is bound to {PORT}")
 # once "bound" we must "listen"
 simple.listen(5)
-knock = KnockKnock()
+i = 1
 while True:
     # Establish connection for our simple server
     serversocket, addr = simple.accept()
@@ -48,17 +57,9 @@ while True:
     # Send message confirming connection
     # clientsocket.send("You were successfully connected".encode())
     # We're closing after a single send event and then disconnecting (no infinite loop)
-
     while True:
-        joke()
-        serversocket.send("Do you want to hear another?".encode())
-        jokemsg = serversocket.recv(1024).decode()
-        if knock.i <= 3:
-            if jokemsg == 'no':
-                serversocket.send("close".encode())
-                serversocket.close()
-                break
-            continue
-        serversocket.send("close".encode())
-        serversocket.close()
-        break
+        joke(i)
+        i = i + 1
+        if i > 4:
+            i = 1
+    serversocket.close()
