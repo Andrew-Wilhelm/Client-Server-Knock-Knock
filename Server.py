@@ -14,12 +14,12 @@ knocking = {
 
 # with connection
 def joke(j):
-    serversocket.send("Knock Knock".encode())
+    serversocket.send("Knock Knock.".encode())
     done = "not"
     while True:
         msg = serversocket.recv(1024).decode()
         if msg == "who's there":
-            serversocket.send(knocking[j].encode())
+            serversocket.send(f"{knocking[j]}.".encode())
         elif msg not in knocking:
             serversocket.send("Improper response\n".encode())
             break
