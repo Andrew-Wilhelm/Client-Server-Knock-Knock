@@ -32,7 +32,6 @@ def joke(j):
                     done = "done"
         if done == "done":
             break
-            # serversocket.send("Wrong Reply".encode())
 
 
 # File to show cross-platform.
